@@ -90,7 +90,7 @@ http_proxy="YOUR_PROXY_URL" && https_proxy=$http_proxy && HTTP_PROXY=$http_proxy
 Please YOUR_PROXY_URLreplace with your own proxy address
 
 ## Dependent installation
-- Command line execution `git clone https://github.com/iwestlin/gd-utils && cd gd-utils` Clone and switch to this project folder
+- Command line execution `git clone https://github.com/waga43/gd-utils-ettm && cd gd-utils-ettm` Clone and switch to this project folder
 - **Perform `npm install --unsafe-perm=true --allow-root` installation dependent**, partially dependent may need to download proxy environment, we need to step on the configuration
 
 If an error occurs during installation, please switch the nodejs version to v12 and try again. If there `Error: not found: make is` such a message in the error message, it means that your command line environment is missing the make command, you can refer to [ here ](https://askubuntu.com/questions/192645/make-command-not-found) or directly google search `Make Command Not Found`
@@ -108,9 +108,9 @@ After the configured SA, if you do not need to file personal pad for operations,
 - Command line `rclone config file` to find the profile path rclone
 - Open the configuration file `rclone.conf`, find `client_id`, `client_secret` and `refresh_token` these three variables, which are filled under this project `config.js`, you need to pay attention to these three values must be wrapped in a pair of quotes, and the quotes at the end of the comma, which is required JavaScript-compliant [object syntax](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Object_initializer)
 
-If you have not configured rclone, you can search to `rclone google drive` and complete the relevant configuration.  
+If you have not configured rclone, you can search for `rclone google drive` and complete the relevant configuration.  
 
-If you `rclone.conf` there are no `client_id` and `client_secret` show that you can use the default configuration rclone when the rclone own `client_id`, even rclone themselves [do not recommend doing so](https://github.com/rclone/rclone/blob/8d55367a6a2f47a1be7e360a872bd7e56f4353df/docs/content/drive.md#making-your-own-client_id)，ecause we share its interface calls limit during peak usage period may trigger limit.
+If in your `rclone.conf` there are no `client_id` and `client_secret` it shows that you can use the default configuration of rclone, with the rclone own `client_id`, although even rclone themselves [do not recommend doing so](https://github.com/rclone/rclone/blob/8d55367a6a2f47a1be7e360a872bd7e56f4353df/docs/content/drive.md#making-your-own-client_id)，because we share its interface calls limit during peak usage period may trigger limit.
 
 Get your own `client_id`. You can refer to these two articles:  [Cloudbox/wiki/Google-Drive-API-Client-ID-and-Client-Secret](https://github.com/Cloudbox/Cloudbox/wiki/Google-Drive-API-Client-ID-and-Client-Secret) and [https://p3terx.com/archives/goindex-google-drive-directory-index.html#toc_2](https://p3terx.com/archives/goindex-google-drive-directory-index.html#toc_2)
 
