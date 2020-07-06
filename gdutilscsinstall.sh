@@ -46,14 +46,14 @@ if [[ "$os" = "Debian" ]]; then
 elif [[ "$os" = "Ubuntu" ]]; then
     cmd_install="sudo apt-get"
     cmd_install_rely="build-essential"
-    nodejs_curl="https://deb.nodesource.com/setup_10.x"
+    nodejs_curl="https://deb.nodesource.com/setup_12.x"
     cmd_install_rpm_build=""
     echo
     echo -e "\033[1;32m★★★★★ Your operating system is Ubuntu, and the "TD query dump" part of the gdutils project will soon be deployed for you ★★★★★\033[0m"
 elif [[ "$os" = "CentOS" ]]; then
     cmd_install="yum"
     cmd_install_rely="gcc-c++ make"
-    nodejs_curl="https://rpm.nodesource.com/setup_10.x"
+    nodejs_curl="https://rpm.nodesource.com/setup_12.x"
     cmd_install_rpm_build="yum install rpm-build -y"
     echo
     echo -e "\033[1;32m★★★★★ Your operating system is Centos, and the "TD query transfer" part of the gdutils project will soon be deployed for you ★★★★★\033[0m"
@@ -111,13 +111,13 @@ npm config set unsafe-perm=true
 npm i
 
 echo
-echo -e "\033[1;32m★★★Congratulations! The "TD query transfer" part of the gdutils project has been deployed. Please upload sa to the "./gd-utils-cht/sa/" directory to complete the final Configuration ★★★\033[0m"
+echo -e "\033[1;32m★★★Congratulations! The "TD query transfer" part of the gdutils project has been deployed. Please upload sa to the "./gd-utils-ettm/sa/" directory to complete the final Configuration ★★★\033[0m"
 echo
 
 cd ~
 rm -f gdutilscs.sh
 
-# #########################gdutilsFeature suggestion#################### ##############
+# #########################gdutils Feature suggestion#################### ##############
 # This section is recommended for gdutils project because I mainly use the search function so the following is recommended only involves inquiry
 # 1- Put the following parameters into the configuration file settings: sa storage path
 # 2- Change sa "random" use to "sequential" group use;
