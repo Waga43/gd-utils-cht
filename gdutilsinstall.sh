@@ -76,7 +76,7 @@ elif [[ "$os" = "mac" ]]; then
     echo
 else
     echo
-    echo -e "\033[1;32m unknow os $OS, exit! \033[0m"
+    echo -e "\033[1;32m unknown os $OS, exit! \033[0m"
     exit
     echo
     echo
