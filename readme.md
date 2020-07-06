@@ -4,7 +4,7 @@
 # All Credits go to [iwestlin](https://github.com/iwestlin/gd-utils), [vitaminx](https://github.com/vitaminx/gd-utils) and [liaojack8](https://github.com/liaojack8/gd-utils-cht)
 > Not just the fastest google drive copy tools [ compared with other tools](./compare.md)
 
-> I wrote only part of it I modified specific instructions or look[here](https://github.com/iwestlin/gd-utils) and [here](https://github.com/vitaminx/gd-utils)吧
+> I wrote only part of it I modified specific instructions or look [here](https://github.com/iwestlin/gd-utils) and [here](https://github.com/vitaminx/gd-utils)吧
 ## tg_bot modification
 - When executing the /task command, the percentage of completion will be returned
 
@@ -42,10 +42,10 @@ The modification is in [`config.js`](./config.js), COPY_TARGET2 COPY_TARGET2 and
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/waga43/gd-utils-ettm/master/gdutilsbotinstall.sh)"
   ```  
 - Four parameters need to be entered during the installation process:
-  -Robot TOKEN: This can be obtained by registering with "@BotFather" in Telegram
-  -Telegram user ID: You can get it by sending a message to the robot @userinfobot in Telegram
-  -Google team drive ID: it is the default address of the file you are dumping, and the script is mandatory to write the Google team drive ID
-  -Domain name: the domain name you resolved to VPS on cloudflare (format: abc.34513.com)    
+    1. **Robot TOKEN:** This can be obtained by registering with "@BotFather" in Telegram
+    2. **Telegram user ID**: You can get it by sending a message to the robot @userinfobot in Telegram
+    3. **Google team drive ID**: it is the default address of the file you are dumping, and the script is mandatory to write the Google team drive ID
+    4. **Domain name**: the domain name you resolved to VPS on cloudflare (format: abc.34513.com)    
   - For script installation problems, please send information to TG: onekings or vitaminor@gmail.com    
   - For system usage problems (such as unable to transfer, restarting the robot, etc.), please contact the project author @vegg
 - The test can be used to install the system perfectly:    
