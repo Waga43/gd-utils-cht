@@ -2,7 +2,7 @@
 echo
 echo -e "\033[1;32m===== <<gdutils project one-click deployment script "TG robot">> =====\033[0m"
 echo -e "\033[1;32m----------------[ v2.1 by oneking ]----------------\033[0m"
-echo -e "\033[32m 01.\033[0m This script is a one-click deployment script for the "TG robot" part of the gdutils project of TG; 大神@viegg; "
+echo -e "\033[32m 01.\033[0m This script is a one-click deployment script for the "TG robot" part of the gdutils project of TG; Okami@viegg; "
 echo -e "\033[32m 02.\033[0m Preparation work 1: TD query and transfer part of gdutils project is completed; "
 echo -e "\033[32m 03.\033[0m Preparation work 2: Register the robot on TG to obtain and record the robot TOKEN "
 echo -e "\033[32m 04.\033[0m Preparation three: Have a domain name bound to cloudflare resolve to the IP of the server where the robot is located "
@@ -10,7 +10,7 @@ echo -e "\033[32m 05.\033[0m Preparation 4: Get personal TG account ID from robo
 echo -e "\033[32m 06.\033[0m Preparation 5: Register a Google team drive to join sa and record the disk ID "
 echo -e "\033[32m 07.\033[0m This script is suitable for CentOS/Debian/Ubuntu three operating systems, automatic identification, automatic matching of parameters and one-click deployment "
 echo -e "\033[32m 08.\033[0m Because this script involves more dependent software, to avoid interruption, it is recommended to use the screen window to install "
-echo -e "\033[32m 09.\033[0m can be tested to install the system perfectly: Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04 "
+echo -e "\033[32m 09.\033[0m Can be tested to install the system perfectly: Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04 "
 echo -e "\033[32m 10.\033[0m If you have any problems during the deployment process, please send the "error screenshot" and "deploy VPS system name version" information to TG: onekings or vitaminor@gmail.com "
 echo -e "\033[1;32m---------------------------------------- --------\033[0m "
 read -s -n1 -p " ★★★ If you have already prepared [2/3/4/5/6] above, please press any key to start deployment, if you are not ready, please press "Ctrl+c" to terminate deployment ★ ★★ "
@@ -109,13 +109,13 @@ while [[ "${#YOUR_GOOGLE_TEAM_DRIVE_ID}" != 19 ]]; do
 done
 
 cd ~ &&
-    sed -i "s/bot_token/$YOUR_BOT_TOKEN/g" ./gd-utils-cht/config.js &&
-    sed -i "s/your_tg_username/$YOUR_TELEGRAM_ID/g" ./gd-utils-cht/config.js && 
-    sed -i "s/DEFAULT_TARGET = ''/DEFAULT_TARGET = '$YOUR_GOOGLE_TEAM_DRIVE_ID'/g" ./gd-utils-cht/config.js
+    sed -i "s/bot_token/$YOUR_BOT_TOKEN/g" ./gd-utils-ettm/config.js &&
+    sed -i "s/your_tg_username/$YOUR_TELEGRAM_ID/g" ./gd-utils-ettm/config.js && 
+    sed -i "s/DEFAULT_TARGET = ''/DEFAULT_TARGET = '$YOUR_GOOGLE_TEAM_DRIVE_ID'/g" ./gd-utils-ettm/config.js
 echo -e "\033[1;32m----------------------------------------------------------\033[0m"
 
 echo -e "\033[1;32m"process daemon pm2" starts installation...\033[0m"
-cd /root/gd-utils-cht &&
+cd /root/gd-utils-ettm &&
     npm i pm2 -g && pm2 l
 echo -e "\033[1;32m starts the daemon...\033[0m"
 pm2 start server.js --node-args="--max-old-space-size=4096"
