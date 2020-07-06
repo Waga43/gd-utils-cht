@@ -1,4 +1,4 @@
-# EduTechTainMent | Over Every Possessor of Knowledge, There is (Some) One (Else) More Knowldegeable
+# EduTechTainMent | Over Every Possessor of Knowledge, There is (Some) One (Else) More Knowledgeable
 
 # gd-utils-ettm is just a translation and edition of the ORIGINAL gd-utils-cht
 # All Credits go to [iwestlin](https://github.com/iwestlin/gd-utils), [vitaminx](https://github.com/vitaminx/gd-utils) and [liaojack8](https://github.com/liaojack8/gd-utils-cht)
