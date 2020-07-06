@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 const { argv } = require('yargs')
-  .usage('用法: ./$0 <source id> <target id> [options]')
+  .usage('Usage: ./$0 <source id> <target id> [options]')
   .alias('u', 'update')
-  .describe('u', '不使用本地缓存，强制从线上获取源文件夹信息')
+  .describe('u', 'Do not use local cache, force to get source folder information from online')
   .alias('S', 'service_account')
-  .describe('S', '使用service account进行操作，前提是必须在 ./sa 目录下放置sa授权json文件')
+  .describe('S', 'use service account for operation, provided that the sa authorization json file must be placed in the ./sa directory')
   .help('h')
   .alias('h', 'help')
 
@@ -17,8 +17,8 @@ if (validate_fid(fid)) {
   dedupe({ fid, update, service_account }).then(info => {
     if (!info) return
     const { file_count, folder_count } = info
-    console.log('任务完成，共删除文件数：', file_count, '目录数：', folder_count)
+    console.log('Task completed, the total number of deleted files:', file_count, 'Number of directories:', folder_count )
   })
 } else {
-  console.warn('目录ID缺失或格式错误')
+  console.warn('missing or malformed list ID')
 }

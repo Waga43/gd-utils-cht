@@ -1,63 +1,59 @@
-# 对比本工具和其他类似工具在 server side copy 的速度上的差异
+# Compare the speed difference of this tool and other similar tools in server side copy
+Take copying[https://drive.google.com/drive/folders/1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3](https://drive.google.com/drive/folders/1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)as an example（[ file statistics](https://gdurl.viegg.com/api/gdrive/count?fid=1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)）  
+a total of 242 files and 26 folders
 
-以拷贝[https://drive.google.com/drive/folders/1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3](https://drive.google.com/drive/folders/1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)为例（[文件统计](https://gdurl.viegg.com/api/gdrive/count?fid=1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)）  
-共 242 个文件和 26 个文件夹
+Unless otherwise specified, the following operating environment is on the local command line (hang agent)
 
-如无特殊说明，以下运行环境都是在本地命令行（挂代理）
 
-## 本工具耗时 40 秒
+
+## This tool takes 40 seconds
 <!-- ![](https://viegg.oss-cn-shenzhen.aliyuncs.com/1592732262296.png)   -->
 ![](static/gdurl.png)
 
-另外我在一台洛杉矶的vps上执行相同的命令，耗时23秒。
-这个速度是在使用本项目默认配置**20个并行请求**得出来的，此值可自行修改（下文有方法），并行请求数越大，总速度越快。
+In addition, I executed the same command on a Los Angeles vps, which took 23 seconds. This speed is obtained by using the default configuration of **20 parallel requests** in this project . This value can be modified by yourself (there are methods below). The larger the number of parallel requests, the faster the total speed.
 
-## AutoRclone 耗时 4 分 57 秒（去掉拷贝后验证时间 4 分 6 秒）
+## AutoRclone takes 4 minutes and 57 seconds (4 minutes and 6 seconds to verify after removing the copy)
 <!-- ![](https://viegg.oss-cn-shenzhen.aliyuncs.com/1592732547295.png) -->
 ![](static/autorclone.png)
 
-## gclone 耗时 3 分 7 秒
+##gclone takes 3 minutes and 7 seconds
 <!-- ![](https://viegg.oss-cn-shenzhen.aliyuncs.com/1592732597593.png) -->
 ![](static/gclone.png)
 
-## 为什么速度会有这么大差异
-首先要明确一下 server side copy（后称ssc） 的原理。
+## Why is there such a big difference in speed
+First of all, it is necessary to clarify the principle of server side copy (hereinafter referred to as ssc).
 
-对于 Google Drive 本身而言，它不会因为你ssc复制了一份文件而真的去在自己的文件系统上复制一遍（否则不管它有多大硬盘都会被填满），它只是在数据库里添上了一笔记录。
+As far as Google Drive itself is concerned, it will not actually copy it on its own file system because you ssc copied a file (otherwise no matter how big the hard disk will be filled), it just adds it to the database A record.
 
-所以，无论ssc一份大文件还是小文件，理论上它的耗时都是一样的。
-各位在使用这些工具的时候也可以感受到，复制一堆小文件比复制几个大文件要慢得多。
+Therefore, no matter whether ssc is a large file or a small file, in theory, it takes the same time. When you use these tools, you can also feel that copying a bunch of small files is much slower than copying a few large files.
 
-Google Drive 官方的 API 只提供了复制单个文件的功能，无法直接复制整个文件夹。甚至也无法读取整个文件夹，只能读取某个文件夹的第一层子文件（夹）信息，类似 Linux 命令行里的 `ls` 命令。
+The official Google Drive API only provides the function of copying a single file, and cannot directly copy the entire folder. Can not even read the entire folder, only read the first layer of subfolders (folders) in a folder of information, similar to the Linux command line of `ls` command.
 
-这三个工具的ssc功能，本质上都是对[官方file copy api](https://developers.google.com/drive/api/v3/reference/files/copy)的调用。
+The ssc function of these three tools is essentially a call to the [ official file copy api](https://developers.google.com/drive/api/v3/reference/files/copy)的调用。
 
-然后说一下本工具的原理，其大概步骤如下：
+Then talk about the principle of this tool, the approximate steps are as follows:
+- First, it will recursively read the information of all files and folders in the directory to be copied and save it locally.
+- Then, filter out all the folder objects, and then create a new folder with the same name according to the parent-child relationship, and restore the original structure. (Keeping the original folder structure unchanged while maintaining speed, it really took a lot of work)
+- According to the correspondence between the old and new folder IDs left when creating the folder in the previous step, call the official API to copy the files.
 
-- 首先，它会递归读取要复制的目录里的所有文件和文件夹的信息，并保存到本地。
-- 然后，将所有文件夹对象过滤出来，再根据彼此的父子关系，创建新的同名文件夹，还原出原始结构。（在保证速度的同时保持原始文件夹结构不变，这真的费了一番功夫）
-- 根据上一步创建文件夹时留下的新旧文件夹ID的对应关系，调用官方API复制文件。
-
-得益于本地数据库的存在，它可以在任务中断后从断点继续执行。比如用户按下`ctrl+c`后，可以再执行一遍相同的拷贝命令，本工具会给出三个选项：
+Thanks to the existence of the local database, it can continue execution from the breakpoint after the task is interrupted. For example, ctrl+cafter the user presses , the same copy command can be executed again, the tool will give three options:
 <!-- ![](https://viegg.oss-cn-shenzhen.aliyuncs.com/1592735608511.png) -->
 ![](static/choose.png)
 
-另外两个工具也支持断点续传，它们是怎样做到的呢？AutoRclone是用python对rclone命令的一层封装，gclone是基于rclone的魔改。
-对了——值得一提的是——本工具是直接调用的官方API，不依赖于rclone。
+The other two tools also support breakpoint resumes. How do they do it? AutoRclone is a layer of encapsulation of rclone commands with python, and gclone is a magic change based on rclone. By the way-it is worth mentioning that-this tool is the official API called directly, does not depend on rclone.
 
-我没有仔细阅读过rclone的源码，但是从它的执行日志中可以大概猜出其工作原理。
-先补充个背景知识：对于存在于Google drive的所有文件（夹）对象，它们的一生都伴随着一个独一无二的ID，就算一个文件是另一个的拷贝，它们的ID也不一样。
+I haven't read the source code of rclone carefully, but I can probably guess its working principle from its execution log. First add a little background knowledge: For all files (folders) objects that exist in Google drive, their lives are accompanied by a unique ID. Even if one file is a copy of another, their IDs are different.
 
-所以rclone是怎么知道哪些文件拷贝过，哪些没有呢？如果它没有像我一样将记录保存在本地数据库的话，那么它只能在同一路径下搜索是否存在同名文件，如果存在，再比对它们的 大小/修改时间/md5值 等判断是否拷贝过。
+So how does rclone know which files have been copied and which ones have not? If it does not save the record in the local database like me, then it can only search for files with the same name in the same path, and if so, compare their size/modification time/md5 value to determine whether they have been copied.
 
-也就是说，在最坏的情况下（假设它没做缓存），它每拷贝一个文件之前，都要先调用官方API来搜索判断此文件是否已存在！
+That is to say, in the worst case (assuming it is not cached), before copying a file, it must first call the official API to search and determine whether the file already exists!
 
-此外，AutoRclone和gclone虽然都支持自动切换service account，但是它们执行拷贝任务的时候都是单一SA在调用API，这就注定了它们不能把请求频率调太高——否则可能触发限制。
+In addition, although AutoRclone and gclone both support automatic switching of service accounts, but they perform a copy task when a single SA is calling the API, which is destined that they cannot adjust the request frequency too high-otherwise it may trigger a limit.
 
-而本工具同样支持自动切换service account，区别在于它的每次请求都是随机选一个SA，我的[文件统计](https://gdurl.viegg.com/api/gdrive/count?fid=1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)接口就用了20个SA的token，同时请求数设置成20个，也就是平均而言，单个SA的并发请求数只有一次。
+The tool also supports automatic switching of service accounts. The difference is that each request is randomly selected an SA. My [file statistics](https://gdurl.viegg.com/api/gdrive/count?fid=1W9gf3ReGUboJUah-7XDg5jKXKl5XwQQ3)interface uses 20 SA tokens, and the number of requests is set to 20, which is the average and In other words, the number of concurrent requests for a single SA is only once.
 
-所以瓶颈不在于SA的频率限制，而在运行的vps或代理上，各位可以根据各自的情况适当调整 PARALLEL_LIMIT 的值（在 `config.js` 里）。
+Therefore, the bottleneck is not to limit the frequency of SA, and in the running vps or agents, you can adjust the value according to each case PARALLEL_LIMIT (the config.jsinside).
 
-当然，如果某个SA的单日流量超过了750G，会自动切换成别的SA，同时过滤掉流量用尽的SA。当所有SA流量用完后，会切换到个人的access token，直到流量同样用尽，最终进程退出。
+Of course, if the daily traffic of a certain SA exceeds 750G, it will automatically switch to another SA and filter out the SA with exhausted traffic. When all SA traffic is used up, it will switch to a personal access token until the traffic is also exhausted, and the process eventually exits.
 
-*使用SA存在的限制：除了每日流量限制外，其实每个SA还有个**15G的个人盘空间限额**，也就是说你每个SA最多能拷贝15G的文件到个人盘，但是拷贝到团队盘则无此限制。*
+There are restrictions on using SA: In addition to daily traffic restrictions, in fact, each SA also has a **15G personal disk space** limit , which means that you can copy up to 15G files to a personal disk per SA, but to a team disk There is no such restriction.*

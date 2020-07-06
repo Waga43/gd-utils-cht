@@ -1,21 +1,21 @@
 #!/bin/bash
 echo
-echo -e "\033[1;32m===== <<gdutils项目一键部署脚本之“TD查询转存”>> =====\033[0m"
+echo -e "\033[1;32m===== <<gdutils project one-click deployment script "TD query transfer">> =====\033[0m"
 echo -e "\033[1;32m-----------------[ v2.1 by oneking ]-----------------\033[0m"
-echo -e "\033[32m 1.\033[0m 本脚本是针对TG大神@viegg的gdutils项目“TD查询转存”部分一键部署脚本;"
-echo -e "\033[32m 2.\033[0m 本脚本适应CentOS/Debian/Ubuntu三种操作系统，自动识别、自动匹配参数一键部署"
-echo -e "\033[32m 3.\033[0m 由于本脚本涉及到系统升级和依赖软件较多，避免中断建议使用screen窗口安装"
-echo -e "\033[32m 4.\033[0m 经测试可用完美安装系统：Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04"
-echo -e "\033[32m 5.\033[0m 部署过程中有任何问题请把“错误截图”“部署VPS系统名称版本”信息发给TG：onekings 或 vitaminor@gmail.com"
+echo -e "\033[32m 1.\033[0m This script is a one-click deployment script for the "TD query dump" part of the gdutils project of TG;"
+echo -e "\033[32m 2.\033[0m This script is suitable for CentOS/Debian/Ubuntu three operating systems, automatic identification, automatic matching of parameters and one-click deployment"
+echo -e "\033[32m 3.\033[0m Because this script involves system upgrades and more dependent software, to avoid interruption, it is recommended to use the screen window to install"
+echo -e "\033[32m 4.\033[0m Can be tested to install the system perfectly: Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04"
+echo -e "\033[32m 5.\033[0m If you have any problems during the deployment process, please send the "error screenshot" "Deploy VPS system name version" information to TG: onekings or vitaminor@gmail.com"
 echo -e "\033[1;32m------------------------------------------------\033[0m"
-read -s -n1 -p "★★★ 请按任意键开始部署，按“Ctrl+c”终止部署 ★★★"
+read -s -n1 -p "★★★ Please press any key to start deployment, press "Ctrl+c" to terminate deployment ★★★"
 echo
 echo -e "\033[1;32m------------------------------------------------\033[0m"
 
-# 需要安装的软件工具及依赖
+#  Software tools need to be installed and dependence
 insofts=(epel-release update upgrade wget curl git unzip zip python3-distutils python3 python3-pip)
 
-# 识别操作系统
+# Identify the operating system
 aNAME="$(uname -a)"
 bNAME="$(cat /proc/version)"
 cNAME="$(lsb_release -a)"
@@ -35,97 +35,97 @@ else
     os="$bNAME"
 fi
 
-#根据操作系统设置变量
+#Set variables according to operating system
 if [[ "$os" = "Debian" ]]; then
-    cmd_install="apt-get"                               #安装命令
-    cmd_install_rely="build-essential"                  #c++编译环境
-    nodejs_curl="https://deb.nodesource.com/setup_10.x" #nodejs下载链接
-    cmd_install_rpm_build=""                            #安装rpm-build
+    cmd_install="apt-get"                               #install command
+    cmd_install_rely="build-essential"                  #c++ compilation environment
+    nodejs_curl="https://deb.nodesource.com/setup_10.x" #nodejs download link
+    cmd_install_rpm_build=""                            # install rpm-build
     echo
-    echo -e "\033[1;32m★★★★★ 您的操作系统为Debian，即将为你开始部署gdutils项目“TD查询转存”部分 ★★★★★\033[0m"
+    echo -e "\033[1;32m★★★★★ Your operating system is Debian, and the "TD query dump" part of the gdutils project will be deployed soon for you ★★★★★\033[0m"
 elif [[ "$os" = "Ubuntu" ]]; then
     cmd_install="sudo apt-get"
     cmd_install_rely="build-essential"
     nodejs_curl="https://deb.nodesource.com/setup_10.x"
     cmd_install_rpm_build=""
     echo
-    echo -e "\033[1;32m★★★★★ 您的操作系统为Ubuntu，即将为你开始部署gdutils项目“TD查询转存”部分 ★★★★★\033[0m"
+    echo -e "\033[1;32m★★★★★ Your operating system is Ubuntu, and the "TD query dump" part of the gdutils project will soon be deployed for you ★★★★★\033[0m"
 elif [[ "$os" = "CentOS" ]]; then
     cmd_install="yum"
     cmd_install_rely="gcc-c++ make"
     nodejs_curl="https://rpm.nodesource.com/setup_10.x"
     cmd_install_rpm_build="yum install rpm-build -y"
     echo
-    echo -e "\033[1;32m★★★★★ 您的操作系统为Centos，即将为你开始部署gdutils项目“TD查询转存”部分 ★★★★★\033[0m"
+    echo -e "\033[1;32m★★★★★ Your operating system is Centos, and the "TD query transfer" part of the gdutils project will soon be deployed for you ★★★★★\033[0m"
 elif [[ "$os" = "mac" ]]; then
     echo
-    echo -e "\033[1;32m★★★★★ 您的操作系统为MacOS，请在图形界面手动部署 ★★★★★\033[0m"
+    echo -e "\033[1;32m★★★★★ Your operating system is MacOS, please manually deploy in the graphical interface ★★★★★\033[0m"
     exit
     echo
     echo
 else
     echo
-    echo -e "\033[1;32m unknow os $OS, exit! \033[0m"
+    echo -e "\033[1;32m unknown os $OS, exit! \033[0m"
     exit
     echo
     echo
 fi
 
 echo
-echo -e "\033[1;32m===== <<升级系统/更新软件/安装工具/安装依赖>> =====\033[0m"
+echo -e "\033[1;32m===== <<Upgrade system/update software/installation tools/installation dependencies>> =====\033[0m"
 echo
 
-# 检查which和sudo是否安装，如已安装跳过，未安装先装
+# Check whether sudo which and installation, as already installed skipped, the first means is not installed
 if [[ "$(which which)" == "" ]]; then
-    echo -e "\033[1;32m“which”开始安装......\033[0m"
+    echo -e "\033[1;32m"which" starts installation...\033[0m"
     $cmd_install install which -y
     echo -e "\033[1;32m------------------------------------------------\033[0m"
 elif [[ "$(which sudo)" == "" ]]; then
-    echo -e "\033[1;32m“sudo”开始安装......\033[0m"
+    echo -e "\033[1;32m"sudo" to start the installation...\033[0m"
     $cmd_install install sudo -y
     echo -e "\033[1;32m------------------------------------------------\033[0m"
 fi
 
-#安装工具和依赖
+#Install tools and dependencies
 for ((aloop = 0; aloop < ${#insofts[@]}; aloop++)); do
     if [ ${insofts[$aloop]} = "update" -o ${insofts[$aloop]} = "upgrade" ]; then
-        echo -e "\033[1;32m“${insofts[$aloop]}”开始安装......\033[0m"
+        echo -e "\033[1;32m“${insofts[$aloop]}"Start installation...\033[0m"
         $cmd_install ${insofts[$aloop]} -y
         echo -e "\033[1;32m------------------------------------------------\033[0m"
     else
-        echo -e "\033[1;32m“${insofts[$aloop]}”开始安装......\033[0m"
+        echo -e "\033[1;32m“${insofts[$aloop]}"Start installation...\033[0m"
         $cmd_install install ${insofts[$aloop]} -y
         echo -e "\033[1;32m------------------------------------------------\033[0m"
     fi
 done
 
 echo
-echo -e "\033[1;32m===== <<安装gdutils依赖-nodejs和npm/安装配置gdutils>> =====\033[0m"
+echo -e "\033[1;32m===== <<Install gdutils dependency-nodejs and npm/install configuration gdutils>> =====\033[0m"
 echo
 $cmd_install install $cmd_install_rely -y
 curl -sL $nodejs_curl | bash -
 $cmd_install install nodejs -y
 $cmd_install_rpm_build
-git clone https://github.com/liaojack8/gd-utils-cht && cd gd-utils-cht
+git clone https://github.com/waga43/gd-utils-ettm && cd gd-utils-ettm
 npm config set unsafe-perm=true
 npm i
 
 echo
-echo -e "\033[1;32m★★★ 恭喜您!gdutils项目“TD查询转存”部分已部署完成，请上传sa到“./gd-utils-cht/sa/”目录下完成最后的配置 ★★★\033[0m"
+echo -e "\033[1;32m★★★Congratulations! The "TD query transfer" part of the gdutils project has been deployed. Please upload sa to the "./gd-utils-cht/sa/" directory to complete the final Configuration ★★★\033[0m"
 echo
 
 cd ~
 rm -f gdutilscs.sh
 
-###########################gdutils功能建议##################################
-# 本部分是对gdutils项目的建议，因为我主要用的是查询功能所以以下建议只涉及查询功能
-# 1-把以下参数放入配置文件设置：sa存放路径
-# 2-改sa“随机”使用为“顺序”分组使用；
-# 3-增加输出模式，可以用命令行后带参数选择，具体模式建议：
-#   ①按一级或者二级文件夹显示数量大小
-#   ②可以一次性统计多个磁盘并且输出单个磁盘文件数和大小以及几个磁盘总和
-#   ③获取id对应的文件夹名或者磁盘明保存数据库，给个命令能够查询历史记录汇总或者指定汇总
-# 4-查询过程中输出方式不要每次都输出一次，可以固定+数字变化
-# 5-命令参数可加在ID前或后，如果非要固定一种的话就加在ID之前
-# 6-命令行也改为默认sa模式
-############################################################################
+# #########################gdutilsFeature suggestion#################### ##############
+# This section is recommended for gdutils project because I mainly use the search function so the following is recommended only involves inquiry
+# 1- Put the following parameters into the configuration file settings: sa storage path
+# 2- Change sa "random" use to "sequential" group use;
+# 3- Increase the output mode, you can use the command line with parameters to choose, the specific mode is recommended:
+#    ① According to the first or second folder display the number size
+#    ②Can count multiple disks at one time and output the number and size of files on a single disk and the sum of several disks
+#    ③ Obtain the folder name corresponding to the id or the disk to save the database, and give a command to query the historical record summary or the specified summary
+# 4-During the query process, the output mode should not be output every time, but can be fixed + number change
+# 5- Command parameters can be added before or after the ID, if it is necessary to fix one, it is added before the ID
+# 6- The command line is also changed to the default sa mode
+# ############################################## ##########################
