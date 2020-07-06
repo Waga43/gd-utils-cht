@@ -9,7 +9,7 @@ const { AUTH, DEFAULT_TARGET } = require('../config')
 const { tg_token } = AUTH
 const gen_link = (fid, text) => `<a href="https://drive.google.com/drive/folders/${fid}">${text || fid}</a>`
 
-if (!tg_token) throw new Error('請先在config.js中設定tg_token')
+if (!tg_token) throw new Error('Please set tg_token in config.js first)
 const { https_proxy } = process.env
 const axins = axios.create(https_proxy ? { httpsAgent: new HttpsProxyAgent(https_proxy) } : {})
 
@@ -25,17 +25,17 @@ async function get_folder_name (fid) {
 module.exports = { send_count, send_help, sm, extract_fid, reply_cb_query, send_choice, send_task_info, send_all_tasks, tg_copy, extract_from_text }
 
 function send_help (chat_id) {
-  const text = `<pre>[使用說明]
-***不支持單檔分享***
-命令 ｜ 說明
+  const text = `<pre>[Instructions]
+***ingle file sharing is not supported***
+Command | Description
 
-/help | 返回本使用說明
+/help | Back to this instruction
 
-/count sourceID [-u] | 返回sourceID的文件統計資訊, sourceID可以是共享網址本身，也可以是共享ID。如果命令最后加上 -u，則無視快取記錄強制從線上獲取，適合一段時候後才更新完畢的分享連結。
+/count sourceID [-u] | Returns the document statistics of sourceID. sourceID can be the shared URL itself or the shared ID. If -u is added at the end of the command, the cache record is ignored and forced to be obtained online, which is suitable for sharing links that are updated after a period of time.
 
-/copy sourceID targetID(選填) [-u] | 將sourceID的文件複製到targetID裡（會新建一個資料夾），若無targetID，則會複製到預設位置（config.js中的DEFAULT_TARGET）。如果命令最後加上 -u，則無視快取記錄強制從線上獲取源資料夾資訊。返回拷貝任務的taskID
+/copy sourceID targetID (optional) [-u] | Copy the sourceID file to targetID (a new folder will be created), if there is no targetID, it will be copied to the default location (DEFAULT_TARGET in config.js). If -u is added at the end of the command, the cache record will be ignored to force the source folder information to be obtained online. Returns the taskID of the copy task
 
-/task taskID(選填) | 返回對應任務的進度信息，若不填taskID則返回所有正在運行的任務進度，若填 all 則返回所有任務列表(歷史紀錄)
+/task taskID (optional) | Returns the progress information of the corresponding task. If taskID is not filled, the progress of all running tasks is returned. If all is filled, the list of all tasks is returned (history)
 </pre>`
   return sm({ chat_id, text, parse_mode: 'HTML' })
 }
@@ -43,20 +43,20 @@ function send_help (chat_id) {
 function send_choice ({ fid, chat_id }) {
   return sm({
     chat_id,
-    text: `辨識到分享ID ${fid}，請選擇動作`,
+    text: `Recognized to share ID ${fid}，please select an action`,
     reply_markup: {
       inline_keyboard: [
         [
-          { text: '文件統計', callback_data: `count ${fid}` }
+          { text: 'File Statistics', callback_data: `count ${fid}` }
         ],
         [
-          { text: '開始複製(預設)', callback_data: `copy ${fid}` }
+          { text: 'Start copying (default)', callback_data: `copy ${fid}` }
         ],
         [
-          { text: '開始複製(1)', callback_data: `copy2 ${fid}` }
+          { text: 'Start copying (1)', callback_data: `copy2 ${fid}` }
         ],
         [
-          { text: '開始複製(2)', callback_data: `copy3 ${fid}` }
+          { text: 'Start copying (2)'', callback_data: `copy3 ${fid}` }
         ]
       ]
     }
@@ -65,7 +65,7 @@ function send_choice ({ fid, chat_id }) {
 
 async function send_all_tasks (chat_id) {
   let records = db.prepare('select id, status, ctime from task').all()
-  if (!records.length) return sm({ chat_id, text: '資料庫中沒有任務記錄' })
+  if (!records.length) return sm({ chat_id, text: 'There are no task records in the database' })
   const tb = new Table({ style: { head: [], border: [] } })
   const headers = ['ID', 'status', 'ctime']
   records = records.map(v => {
@@ -78,13 +78,13 @@ async function send_all_tasks (chat_id) {
   return axins.post(url, {
     chat_id,
     parse_mode: 'HTML',
-    text: `所有拷貝任務：\n<pre>${text}</pre>`
+    text: `All copy tasks:\n<pre>${text}</pre>`
   }).catch(err => {
     // const description = err.response && err.response.data && err.response.data.description
     // if (description && description.includes('message is too long')) {
     if (true) {
       const text = [headers].concat(records).map(v => v.join('\t')).join('\n')
-      return sm({ chat_id, parse_mode: 'HTML', text: `所有拷貝任務：\n<pre>${text}</pre>` })
+      return sm({ chat_id, parse_mode: 'HTML', text: `All copy tasks：\n<pre>${text}</pre>` })
     }
     console.error(err)
   })
@@ -102,26 +102,27 @@ async function get_task_info (task_id) {
   const copied_folders = folder_mapping ? (folder_mapping.length - 1) : 0
   let text = '任務ID：' + task_id + '\n'
   const folder_name = await get_folder_name(source)
-  text += '源資料夾：' + gen_link(source, folder_name) + '\n'
-  text += '目的位置：' + gen_link(target) + '\n'
-  text += '新資料夾：' + (new_folder ? gen_link(new_folder) : '尚未創建') + '\n'
-  text += '任務狀態：' + status + '\n'
-  text += '創建時間：' + dayjs(ctime).format('YYYY-MM-DD HH:mm:ss') + '\n'
-  text += '完成時間：' + (ftime ? dayjs(ftime).format('YYYY-MM-DD HH:mm:ss') : '未完成') + '\n'
-  var pct = copied_folders/(folder_count === undefined ? '未知數量' : folder_count)*100
+  text += 'Source folder：' + gen_link(source, folder_name) + '\n'
+  text += 'Destination location：' + gen_link(target) + '\n'
+  text += 'New folder：' + (new_folder ? gen_link(new_folder) : 'Not yet created') + '\n'
+  text += 'Task status：' + status + '\n'
+  text += 'Creation time：' + dayjs(ctime).format('YYYY-MM-DD HH:mm:ss') + '\n'
+  text += 'Completion time：' + (ftime ? dayjs(ftime).format('YYYY-MM-DD HH:mm:ss') : 'Unfinished') + '\n'
+  var pct = copied_folders / (folder_count === undefined ? 'Unknown quantity' : folder_count)*100
   pct = pct.toFixed(2);
-  text += '目錄進度：' + copied_folders + '/' + (folder_count === undefined ? '未知數量' : folder_count) + ' - ' + pct + '%\n'
-  pct = copied_files/(file_count === undefined ? '未知數量' : file_count)*100
+  text += 'Directory progress：' + copied_folders + '/' + (folder_count === undefined ? 'Unknown number' : folder_count) + ' - ' + pct + '%\n'
+  pct = copied_files / (file_count === undefined ? '
+Unknown quantity' : file_count)*100
   pct = pct.toFixed(2);
-  text += '文件進度：' + copied_files + '/' + (file_count === undefined ? '未知數量' : file_count) + ' - ' + pct + '%\n'
-  text += '合計大小：' + (total_size || '未知大小')
+  text += 'File progress：' + copied_files + '/' + (file_count === undefined ? 'Unknown number' : file_count) + ' - ' + pct + '%\n'
+  text += 'Total size：' + (total_size || 'Unknown size')
   const total_count = (folder_count || 0) + (file_count || 0)
   return { text, status, total_count }
 }
 
 async function send_task_info ({ task_id, chat_id }) {
   const { text, status, total_count } = await get_task_info(task_id)
-  if (!text) return sm({ chat_id, text: '資料庫查無此任務ID：' + task_id })
+  if (!text) return sm({ chat_id, text: 'There is no such task ID in database search：' + task_id })
   const url = `https://api.telegram.org/bot${tg_token}/sendMessage`
   let message_id
   try {
@@ -130,7 +131,7 @@ async function send_task_info ({ task_id, chat_id }) {
   } catch (e) {
     console.log('fail to send message to tg', e.message)
   }
-  // get_task_info 在task文件数超大时比较吃cpu，如果超5万就不每10秒更新了
+  // get_task_info is more cpu when the number of task files is too large, if it exceeds 50,000, it will not be updated every 10 seconds
   if (!message_id || status !== 'copying' || total_count > 50000) return
   const loop = setInterval(async () => {
     const url = `https://api.telegram.org/bot${tg_token}/editMessageText`
@@ -143,23 +144,23 @@ async function send_task_info ({ task_id, chat_id }) {
 async function tg_copy ({ fid, target, chat_id, update }) { // return task_id
   target = target || DEFAULT_TARGET
   if (!target) {
-    sm({ chat_id, text: '請輸入目的地ID或先在config.js中設定預設複製的目的地ID(DEFAULT_TARGET)' })
+    sm({ chat_id, text: 'Please enter the destination ID or set the default copy destination ID in config.js(DEFAULT_TARGET)'  })
     return
   }
 
   let record = db.prepare('select id, status from task where source=? and target=?').get(fid, target)
   if (record) {
     if (record.status === 'copying') {
-      sm({ chat_id, text: '已有相同源ID和目的ID的任務正在進行，查詢進度可輸入 /task ' + record.id })
+      sm({ chat_id, text: 'A task with the same source ID and destination ID is already in progress, query progress can be entered /task ' + record.id })
       return
     } else if (record.status === 'finished') {
-      sm({ chat_id, text: `檢測到已存在的任務 ${record.id}，開始繼續拷貝` })
+      sm({ chat_id, text: `detected an existing task ${record.id}，and started  copying` })
     }
   }
 
   real_copy({ source: fid, update, target, not_teamdrive: true, service_account: true, is_server: true })
     .then(async info => {
-      if (!record) record = {} // 防止无限循环
+      if (!record) record = {} // prevent infinite loop
       if (!info) return
       const { task_id } = info
       const row = db.prepare('select * from task where id=?').get(task_id)
@@ -169,19 +170,19 @@ async function tg_copy ({ fid, target, chat_id, update }) { // return task_id
       const copied_files = copied ? copied.trim().split('\n').length : 0
       const copied_folders = mapping ? (mapping.trim().split('\n').length - 1) : 0
 
-      let text = `任務 ${task_id} 完成\n`
+      let text = `Task  ${task_id} completed\n`
       const name = await get_folder_name(source)
-      text += '源資料夾：' + gen_link(source, name) + '\n'
-      text += '目錄完成數：' + copied_folders + '/' + folder_count + '\n'
-      text += '文件完成數：' + copied_files + '/' + file_count + '\n'
-      text += '合計大小：' + (total_size || '未知大小') + '\n'
+      text += 'Source folder：' + gen_link(source, name) + '\n'
+      text += 'Number of completed directories:' + copied_folders + '/' + folder_count + '\n'
+      text += 'Number of completed files：' + copied_files + '/' + file_count + '\n'
+      text += 'Total size：' + (total_size || 'Unknown size') + '\n'
       sm({ chat_id, text, parse_mode: 'HTML' })
     })
     .catch(err => {
       if (!record) record = {}
-      console.error('複製失敗', fid, '-->', target)
+      console.error('Copy failed' , fid, '-->', target)
       console.error(err)
-      sm({ chat_id, text: '複製失敗，失敗訊息：' + err.message })
+      sm({ chat_id, text: 'Copy failed, failed message：' + err.message })
     })
 
   while (!record) {
@@ -201,7 +202,7 @@ function reply_cb_query ({ id, data }) {
   const url = `https://api.telegram.org/bot${tg_token}/answerCallbackQuery`
   return axins.post(url, {
     callback_query_id: id,
-    text: '開始執行 ' + data
+    text: 'Start execution'  + data
   })
 }
 
@@ -214,8 +215,8 @@ async function send_count ({ fid, chat_id, update }) {
   return axins.post(url, {
     chat_id,
     parse_mode: 'HTML',
-    text: `<pre>源資料夾名稱：${name}
-源連結：${gd_link}
+    text: `<pre>source folder name：${name}
+Source link: ${gd_link}
 ${table}</pre>`
   }).catch(async err => {
     // const description = err.response && err.response.data && err.response.data.description
@@ -227,12 +228,12 @@ ${table}</pre>`
       return sm({
         chat_id,
         parse_mode: 'HTML',
-        text: `連結：<a href="https://drive.google.com/drive/folders/${fid}">${fid}</a>\n<pre>
-表格太長超出telegram訊息限制，僅顯示概要：
-目錄名稱：${name}
-文件總數：${file_count}
-目錄總數：${folder_count}
-合計大小：${total_size}
+        text: `link：<a href="https://drive.google.com/drive/folders/${fid}">${fid}</a>\n<pre>
+The form is too long and exceeds the telegram message limit. Only the summary is displayed:
+Directory name：${name}
+Total files：${file_count}
+Total number of directories：${folder_count}
+Total size：${total_size}
 </pre>`
       })
     }

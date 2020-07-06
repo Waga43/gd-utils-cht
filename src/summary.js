@@ -5,7 +5,7 @@ const { escape } = require('html-escaper')
 module.exports = { make_table, summary, make_html, make_tg_table }
 
 function make_html ({ file_count, folder_count, total_size, details }) {
-  const head = ['類型', '數量', '大小']
+  const head = ['type', 'number', 'size']
   const th = '<tr>' + head.map(k => `<th>${k}</th>`).join('') + '</tr>'
   const td = details.map(v => '<tr>' + [escape(v.ext), v.count, v.size].map(k => `<td>${k}</td>`).join('') + '</tr>').join('')
   let tail = ['合計', file_count + folder_count, total_size]
@@ -26,7 +26,7 @@ function make_table ({ file_count, folder_count, total_size, details }) {
     return arr.map(content => ({ content, hAlign }))
   })
   const total_count = file_count + folder_count
-  const tails = ['总计', total_count, total_size].map(v => ({ content: colors.bold(v), hAlign }))
+  const tails = ['total', total_count, total_size].map(v => ({ content: colors.bold(v), hAlign }))
   tb.push(headers, ...records)
   tb.push(tails)
   return tb.toString() + '\n'
@@ -56,16 +56,15 @@ function make_tg_table ({ file_count, folder_count, total_size, details }) {
   const hAlign = 'center'
   const headers = ['Type', 'Count', 'Size'].map(v => ({ content: v, hAlign }))
   details.forEach(v => {
-    if (v.ext === '資料夾') v.ext = '[Folder]'
-    if (v.ext === '無副檔名') v.ext = '[NoExt]'
+    if (v.ext === 'folder' ) v.ext = '[Folder]'
+    if (v.ext === 'no file extension ') v.ext = '[NoExt]'
   })
   const records = details.map(v => [v.ext, v.count, v.size]).map(arr => arr.map(content => ({ content, hAlign })))
   const total_count = file_count + folder_count
   const tails = ['Total', total_count, total_size].map(v => ({ content: v, hAlign }))
   tb.push(headers, ...records)
   tb.push(tails)
-  return tb.toString().replace(/─/g, '—') // 防止在手机端表格换行 去掉replace后在pc端更美观
-}
+  return tb.toString().replace(/─/g, '—') //  Prevent the form change on the mobile phone side and remove the replace on the PC side to be more beautiful
 
 function summary (info, sort_by) {
   const files = info.filter(v => v.mimeType !== 'application/vnd.google-apps.folder')
@@ -80,7 +79,7 @@ function summary (info, sort_by) {
     let { name, size } = v
     size = Number(size) || 0
     const ext = name.split('.').pop().toLowerCase()
-    if (!name.includes('.') || ext.length > 10) { // 若 . 后超过10字符，判断为无扩展名
+    if (!name.includes('.') || ext.length > 10) { // If. exceeds 10 characters, it is judged as no extension
       no_ext_size += size
       return no_ext++
     }
@@ -107,8 +106,8 @@ function summary (info, sort_by) {
   } else {
     details.sort((a, b) => b.count - a.count)
   }
-  if (no_ext) details.push({ ext: '無副檔名', count: no_ext, size: format_size(no_ext_size), raw_size: no_ext_size })
-  if (folder_count) details.push({ ext: '資料夾', count: folder_count, size: 0, raw_size: 0 })
+  if (no_ext) details.push({ ext: 'No extension', count: no_ext, size: format_size(no_ext_size), raw_size: no_ext_size })
+  if (folder_count) details.push({ ext: 'Folder', count: folder_count, size: 0, raw_size: 0 })
   return { file_count, folder_count, total_size, details }
 }
 

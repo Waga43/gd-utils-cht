@@ -11,11 +11,11 @@ const counting = {}
 const router = new Router()
 
 router.get('/api/gdurl/count', async ctx => {
-  if (!ROUTER_PASSKEY) return ctx.body = 'gd-utils 成功啟動'
+  if (!ROUTER_PASSKEY) return ctx.body = 'gd-utils started successfully'
   const { query, headers } = ctx.request
   let { fid, type, update, passkey } = query
   if (passkey !== ROUTER_PASSKEY) return ctx.body = 'invalid passkey'
-  if (!validate_fid(fid)) throw new Error('無效的分享ID')
+  if (!validate_fid(fid)) throw new Error('Invalid share ID')
 
   let ua = headers['user-agent'] || ''
   ua = ua.toLowerCase()
@@ -40,10 +40,10 @@ router.get('/api/gdurl/count', async ctx => {
 
 router.post('/api/gdurl/tgbot', async ctx => {
   const { body } = ctx.request
-  console.log('ctx.ip', ctx.ip) // 可以只允许tg服务器的ip
+  console.log('ctx.ip', ctx.ip) //  You can only allow the IP of the tg server
   console.log('tg message:', body)
   if (TG_IPLIST && !TG_IPLIST.includes(ctx.ip)) return ctx.body = 'invalid ip'
-  ctx.body = '' // 早点释放连接
+  ctx.body = '' //  Release the connection early
   const message = body.message || body.edited_message
 
   const { callback_query } = body
@@ -52,27 +52,27 @@ router.post('/api/gdurl/tgbot', async ctx => {
     const chat_id = callback_query.from.id
     const [action, fid] = data.split(' ')
     if (action === 'count') {
-      if (counting[fid]) return sm({ chat_id, text: fid + ' 正在統計，請稍候' })
+      if (counting[fid]) return sm({ chat_id, text: fid + ' Counting , please wait' })
       counting[fid] = true
       send_count({ fid, chat_id }).catch(err => {
         console.error(err)
-        sm({ chat_id, text: fid + ' 統計失敗：' + err.message })
+        sm({ chat_id, text: fid + 'Statistics failed：' + err.message })
       }).finally(() => {
         delete counting[fid]
       })
     } else if (action === 'copy') {
       tg_copy({ fid, chat_id }).then(task_id => {
-        task_id && sm({ chat_id, text: `開始複製，任務ID: ${task_id} 可輸入 /task ${task_id} 查詢進度` })
+        task_id && sm({ chat_id, text: `Start copying, task ID: ${task_id} can enter /task ${task_id}query progress`  })
       })
     } else if (action === 'copy2') {
       const target = COPY_TARGET2
       tg_copy({ fid, target, chat_id }).then(task_id => {
-        task_id && sm({ chat_id, text: `開始複製，任務ID: ${task_id} 可輸入 /task ${task_id} 查詢進度` })
+        task_id && sm({ chat_id, text: `Start copying, task ID: ${task_id} can enter /task ${task_id} query progress` })
       })
     } else if (action === 'copy3') {
       const target = COPY_TARGET3
       tg_copy({ fid, target, chat_id }).then(task_id => {
-        task_id && sm({ chat_id, text: `開始複製，任務ID: ${task_id} 可輸入 /task ${task_id} 查詢進度` })
+        task_id && sm({ chat_id, text: `Start copying, task ID: ${task_id} can enter /task  ${task_id} query progress` })
       })
     }
     return reply_cb_query({ id, data }).catch(console.error)
@@ -87,32 +87,32 @@ router.post('/api/gdurl/tgbot', async ctx => {
   if (!chat_id || !text || !tg_whitelist.some(v => {
     v = String(v).toLowerCase()
     return v === username || v === user_id
-  })) return console.warn('異常請求')
+  })) return console.warn('abnormal request' )
 
   const fid = extract_fid(text) || extract_from_text(text)
   const no_fid_commands = ['/task', '/help']
   if (!no_fid_commands.some(cmd => text.startsWith(cmd)) && !validate_fid(fid)) {
-    return sm({ chat_id, text: '未辨識到分享ID' })
+    return sm({ chat_id, text: 'Share ID not recognized' })
   }
   if (text.startsWith('/help')) return send_help(chat_id)
   if (text.startsWith('/count')) {
-    if (counting[fid]) return sm({ chat_id, text: fid + ' 正在統計，請稍候' })
+    if (counting[fid]) return sm({ chat_id, text: fid + ' Counting , please wait' })
     try {
       counting[fid] = true
       const update = text.endsWith(' -u')
       await send_count({ fid, chat_id, update })
     } catch (err) {
       console.error(err)
-      sm({ chat_id, text: fid + ' 統計失敗：' + err.message })
+      sm({ chat_id, text: fid + 'Statistics failed:' + err.message })
     } finally {
       delete counting[fid]
     }
   } else if (text.startsWith('/copy')) {
     const target = text.replace('/copy', '').replace(' -u', '').trim().split(' ').map(v => v.trim())[1]
-    if (target && !validate_fid(target)) return sm({ chat_id, text: `目標ID ${target} 格式不正確` })
+    if (target && !validate_fid(target)) return sm({ chat_id, text: `Target ID ${target} format is incorrect`   })
     const update = text.endsWith(' -u')
     tg_copy({ fid, target, chat_id, update }).then(task_id => {
-      task_id && sm({ chat_id, text: `開始複製，任務ID: ${task_id} 可輸入 /task ${task_id} 查詢進度` })
+      task_id && sm({ chat_id, text: `Start copying, task ID: ${task_id} can enter /task ${task_id} query progress`  })
     })
   } else if (text.startsWith('/task')) {
     let task_id = text.replace('/task', '').trim()
@@ -122,14 +122,14 @@ router.post('/api/gdurl/tgbot', async ctx => {
     task_id = parseInt(task_id)
     if (!task_id) {
       const running_tasks = db.prepare('select id from task where status=?').all('copying')
-      if (!running_tasks.length) return sm({ chat_id, text: '目前沒有執行中的任務' })
+      if (!running_tasks.length) return sm({ chat_id, text: 'There are currently no tasks in progress' })
       return running_tasks.forEach(v => send_task_info({ chat_id, task_id: v.id }).catch(console.error))
     }
     send_task_info({ task_id, chat_id }).catch(console.error)
   } else if (text.includes('drive.google.com/') || validate_fid(text)) {
     return send_choice({ fid: fid || text, chat_id }).catch(console.error)
   } else {
-    sm({ chat_id, text: '暫不支持此命令' })
+    sm({ chat_id, text: 'This command is not  currently supported' })
   }
 })
 
