@@ -2,16 +2,16 @@
 echo
 echo -e "\033[1;32m===== <<gdutils project deployment script requirements and instructions>> =====\033[0m"
 echo -e "\033[1;32m---------------[ v2.1 by oneking ]---------------\033[0m"
-echo -e "\033[32m 01.\033[0m This script is a one-click deployment script for the gdutils project of TG 大神@viegg;"
+echo -e "\033[32m 01.\033[0m This script is a one-click deployment script for the gdutils project of TG Okami@viegg;"
 echo -e "\033[32m 02.\033[0m The script includes two parts: " Query Dump Deployment on TD Disk VPS" and "Telegram Robot Deployment"
 echo -e "\033[32m 03.\033[0m This script adapts to CentOS/Debian/Ubuntu three operating systems, automatically recognizes and automatically selects the corresponding branch for one-click installation and deployment"
-echo -e "\033[32m 04.\033[0m can be deployed in three steps: upload the script to VPS → set script execution permissions → run"
+echo -e "\033[32m 04.\033[0m Can be deployed in three steps: upload the script to VPS → set script execution permissions → run"
 echo -e "\033[32m 05.\033[0m Preparation 1: Register the robot on TG to obtain and record the robot TOKEN"
-echo -e "\033[32m 06.\033[0m Preparation work 2: Have a domain name bound to cloudflare resolve to the server IP where the robot is located"
-echo -e "\033[32m 07.\033[0m Preparation three: Get personal TG account ID from robot@userinfobot and record"
+echo -e "\033[32m 06.\033[0m Preparation work 2: Have a domain name bound to cloudfare resolve to the server IP where the robot is located"
+echo -e "\033[32m 07.\033[0m Preparation 3: Get personal TG account ID from robot@userinfobot and record"
 echo -e "\033[32m 08.\033[0m Preparation 4: Register a Google team drive to join sa and record the disk ID"
-echo -e "\033[32m 09.\033[0m can be tested to install the system perfectly: Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04"
-echo -e "\033[32m 10.\033[0m  If you have any problems during the deployment process, please send the "error screenshot" and "deploy VPS system name version" information to TG: onekings or vitaminor@gmail.com"
+echo -e "\033[32m 09.\033[0m Can be tested to install the system perfectly: Centos 7/8 debian 9/10 ubuntu 16.04/18.04/19.10/20.04"
+echo -e "\033[32m 10.\033[0m If you have any problems during the deployment process, please send the "error screenshot" and "deploy VPS system name version" information to TG: onekings or vitaminor@gmail.com"
 echo -e "\033[1;32m------------------------------------------------\033[0m"
 read -s -n1 -p "★★★ If you have already prepared [5/6/7/8] above or do not need to install Telegram robot, please press any key to start deployment, if you are not ready, please press "Ctrl+c" "Termination script ★★★"
 echo
@@ -44,7 +44,7 @@ insofts=(epel-release update upgrade wget curl git unzip zip python3-distutils p
 if [[ "$os" = "Debian" ]]; then
     cmd_install="apt-get"                                     #install command
     cmd_install_rely="build-essential"                        #c++ compilation environment
-    nodejs_curl="https://deb.nodesource.com/setup_10.x"       #nodejs download link
+    nodejs_curl="https://deb.nodesource.com/setup_12.x"       #nodejs download link
     cmd_install_rpm_build=""                                  #installation rpm-build
     nginx_conf="/etc/nginx/sites-enabled/"                    #Nginx configuration file storage path
     rm_nginx_default="rm -f /etc/nginx/sites-enabled/default" #delete default
@@ -53,7 +53,7 @@ if [[ "$os" = "Debian" ]]; then
 elif [[ "$os" = "Ubuntu" ]]; then
     cmd_install="sudo apt-get"
     cmd_install_rely="build-essential"
-    nodejs_curl="https://deb.nodesource.com/setup_10.x"
+    nodejs_curl="https://deb.nodesource.com/setup_12.x"
     cmd_install_rpm_build=""
     nginx_conf="/etc/nginx/sites-enabled/"
     rm_nginx_default="rm -f /etc/nginx/sites-enabled/default"
@@ -62,7 +62,7 @@ elif [[ "$os" = "Ubuntu" ]]; then
 elif [[ "$os" = "CentOS" ]]; then
     cmd_install="yum"
     cmd_install_rely="gcc-c++ make"
-    nodejs_curl="https://rpm.nodesource.com/setup_10.x"
+    nodejs_curl="https://rpm.nodesource.com/setup_12.x"
     cmd_install_rpm_build="yum install rpm-build -y"
     nginx_conf="/etc/nginx/conf.d/"
     rm_nginx_default=""
@@ -122,7 +122,7 @@ npm config set unsafe-perm=true
 npm i
 
 echo
-echo -e "\033[1;32m★★★ Congratulations! The gdutils statistical dump system has been installed correctly, please upload sa to the "./gd-utils-cht/sa/" directory to complete the final configuration ★★★\033[0m"
+echo -e "\033[1;32m★★★ Congratulations! The gdutils statistical dump system has been installed correctly, please upload sa to the "./gd-utils-ettm/sa/" directory to complete the final configuration ★★★\033[0m"
 echo
 
 #################################################################################################
@@ -174,13 +174,13 @@ while [[ "${#YOUR_GOOGLE_TEAM_DRIVE_ID}" != 19 ]]; do
 done
 
 cd ~ &&
-    sed -i "s/bot_token/$YOUR_BOT_TOKEN/g" ./gd-utils-cht/config.js &&
-    sed -i "s/your_tg_username/$YOUR_TELEGRAM_ID/g" ./gd-utils-cht/config.js && 
-    sed -i "s/DEFAULT_TARGET = ''/DEFAULT_TARGET = '$YOUR_GOOGLE_TEAM_DRIVE_ID'/g" ./gd-utils-cht/config.js
+    sed -i "s/bot_token/$YOUR_BOT_TOKEN/g" ./gd-utils-ettm/config.js &&
+    sed -i "s/your_tg_username/$YOUR_TELEGRAM_ID/g" ./gd-utils-ettm/config.js && 
+    sed -i "s/DEFAULT_TARGET = ''/DEFAULT_TARGET = '$YOUR_GOOGLE_TEAM_DRIVE_ID'/g" ./gd-utils-ettm/config.js
 echo -e "\033[1;32m----------------------------------------------------------\033[0m"
 
 echo -e "\033[1;32m"process daemon pm2" starts installation...\033[0m"
-cd /root/gd-utils-cht &&
+cd /root/gd-utils-ettm &&
     npm i pm2 -g && pm2 l
 echo -e "\033[1;32mstarts the daemon...\033[0m"
 pm2 start server.js --node-args="--max-old-space-size=4096"
@@ -239,7 +239,7 @@ echo
 cd ~
 rm -f gdutilsinstall.sh
 
-# #########################gdutilsFeature suggestion#################### ##############
+# #########################gdutils Feature suggestion#################### ##############
 # This section is recommended for gdutils project because I mainly use the search function so the following is recommended only involves inquiry
 # 1- Put the following parameters into the configuration file settings: sa storage path
 # 2- Change sa "random" use to "sequential" group use;
