@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 echo
 echo -e "\033[1;32m===== <<gdutils project deployment script requirements and instructions>> =====\033[0m"
 echo -e "\033[1;32m---------------[ v2.1 by oneking ]---------------\033[0m"
@@ -150,7 +151,7 @@ read -p """Please enter your domain name (resolved on cloudflare to the domain n
     Your Domain Name =>:""" YOUR_DOMAIN_NAME
 #Judge whether the domain name is correct
 while [[ "$YOUR_DOMAIN_NAME" =~ "http" ]]; do
-    echo -e "\033[1;32m★★★ “Your Domain Name" is entered incorrectly, you should enter the domain name you resolved on cloudflare and do not contain "http", please re-enter or press "Ctrl+C" to end the installation! ★★★\033[0m"
+    echo -e "\033[1;32m★★★ "Your Domain Name" is entered incorrectly, you should enter the domain name you resolved on cloudflare and do not contain "http", please re-enter or press "Ctrl+C" to end the installation! ★★★\033[0m"
     read -p """Please enter your domain name (resolved on cloudflare to the domain name of the VPS where your robot is located, format: bot.abc.com) and press Enter
     Your Domain Name =>:""" YOUR_DOMAIN_NAME
 done
