@@ -39,7 +39,7 @@ fi
 if [[ "$os" = "Debian" ]]; then
     cmd_install="apt-get"                               #install command
     cmd_install_rely="build-essential"                  #c++ compilation environment
-    nodejs_curl="https://deb.nodesource.com/setup_10.x" #nodejs download link
+    nodejs_curl="https://deb.nodesource.com/setup_12.x" #nodejs download link
     cmd_install_rpm_build=""                            # install rpm-build
     echo
     echo -e "\033[1;32m★★★★★ Your operating system is Debian, and the "TD query dump" part of the gdutils project will be deployed soon for you ★★★★★\033[0m"
